@@ -107,8 +107,8 @@ class RipgrepOperatorCharm(CharmBase):
         
         # Only change to active if we have all required data
         if self._search_provider.is_ready():
-            relation = self._charm.model.get_relation(self._search_provider._relation_name)
-            if relation and relation.data[self.app]:
+            relation = self.model.get_relation(self._search_provider._relation_name)
+            if relation and relation.data.get(self.app):
                 self.unit.status = ActiveStatus()
 
 if __name__ == "__main__":

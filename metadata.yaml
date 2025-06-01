@@ -1,0 +1,32 @@
+name: ripgrep-operator
+display-name: Ripgrep Search Operator
+summary: Cloud-native text search capabilities using ripgrep
+description: |
+  A Juju charm that provides ripgrep functionality as a service,
+  enabling remote text search capabilities across different
+  architectures and deployment scenarios. It wraps the ripgrep
+  snap package and exposes its functionality through standardized
+  interfaces and actions.
+
+provides:
+  search-api:
+    interface: ripgrep-search
+requires:
+  search-consumer:
+    interface: search-pipeline
+
+containers:
+  ripgrep:
+    resource: ripgrep-image
+    description: Container running ripgrep search service
+
+resources:
+  ripgrep-image:
+    type: oci-image
+    description: OCI image for ripgrep container
+
+storage:
+  search-cache:
+    type: filesystem
+    location: /cache
+    description: Cache storage for search results 

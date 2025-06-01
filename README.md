@@ -1,9 +1,11 @@
 # Ripgrep Operator
 
-[![Charmhub](https://charmhub.io/static/images/badges/charmhub.svg)](https://charmhub.io)
-[![Snapcraft](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io)
-[![Juju](https://assets.ubuntu.com/v1/a559ca5b-juju_grey.svg)](https://juju.is/)
-[![LXD](https://linuxcontainers.org/static/img/containers.png)](https://linuxcontainers.org/lxd)
+[![Charmhub](https://img.shields.io/badge/Charmhub-ripgrep--operator-blue)](https://charmhub.io)
+[![Snapcraft](https://img.shields.io/badge/Snapcraft-Store-green)](https://snapcraft.io)
+[![Juju](https://img.shields.io/badge/Juju-2.9+-purple)](https://juju.is/)
+[![LXD](https://img.shields.io/badge/LXD-5.0+-orange)](https://linuxcontainers.org/lxd)
+[![Multipass](https://img.shields.io/badge/Multipass-1.12+-lightblue)](https://multipass.run)
+[![CI/CD](https://img.shields.io/badge/CI%2FCD-pending-yellow)](https://github.com/joel0/ripgrep-operator/actions)
 
 > A Juju charm that provides ripgrep functionality as a service, enabling remote text search capabilities across different architectures and deployment scenarios.
 

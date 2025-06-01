@@ -1,0 +1,44 @@
+# Default configuration for ripgrep operator
+
+# Search settings
+default_search_settings:
+  case_sensitive: false
+  context_lines: 2
+  follow_symlinks: true
+  hidden_files: false
+  max_depth: null  # unlimited
+  max_filesize: null  # unlimited
+  binary_files: "skip"  # skip, search, or text
+  multiline: false
+  line_number: true
+
+# File type settings
+file_types:
+  include:
+    - "*"  # search all files by default
+  exclude:
+    - "*.git/*"
+    - "*.svn/*"
+    - "*.hg/*"
+    - "*.idea/*"
+    - "*.vscode/*"
+    - "*node_modules/*"
+    - "*.pyc"
+    - "*.pyo"
+    - "*.so"
+    - "*.o"
+
+# Output settings
+output:
+  default_format: "text"  # text or json
+  color: "auto"  # auto, always, or never
+  heading: true
+  line_numbers: true
+  column_numbers: false
+  context_separator: "--"
+
+# Performance settings
+performance:
+  threads: "auto"  # auto or specific number
+  buffer_size: "64K"
+  max_memory: null  # unlimited 

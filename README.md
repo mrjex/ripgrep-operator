@@ -62,11 +62,9 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 
 ### Open Source Operators
 
-- A
+- **Primary Source:** [Postgresql Operator](https://github.com/canonical/postgresql-operator/tree/main?tab=security-ov-file) 
 
-- B
-
-- C
+- **Secondary Source:** [Prometheus Operator](https://github.com/canonical/prometheus-k8s-operator/tree/main)
 
 
 ### Technologies

@@ -1,5 +1,5 @@
 # 3. Initialize charm project
-charmcraft init --profile machine
+charmcraft init --profile machine --force --author="Your_Name Your_Email"
 
 # 4. Install required snaps if not already installed
 sudo snap install ripgrep --classic

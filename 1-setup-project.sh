@@ -1,8 +1,7 @@
 
-
-
 # 1. Install
 install() {
+    sudo snap install ripgrep --classic
     sudo snap install charmcraft --classic
     sudo snap install juju --classic
     sudo snap install multipass

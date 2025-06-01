@@ -7,15 +7,15 @@
 import json
 import logging
 import subprocess
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 logger = logging.getLogger(__name__)
 
 class RipgrepWrapper:
-    """Wrapper for ripgrep search functionality."""
+    """Wrapper for ripgrep functionality."""
 
     def __init__(self):
-        """Initialize the wrapper."""
+        """Initialize ripgrep wrapper."""
         self._search_path = "."
         self._verify_ripgrep()
 
@@ -28,7 +28,7 @@ class RipgrepWrapper:
             raise RuntimeError("Ripgrep not found or not working properly") from e
 
     def set_search_path(self, path: str) -> None:
-        """Set the default search path."""
+        """Set the search path."""
         self._search_path = path
 
     def search(
@@ -36,66 +36,61 @@ class RipgrepWrapper:
         pattern: str,
         path: Optional[str] = None,
         output_format: str = "text",
-        context_lines: int = 2,
-        case_sensitive: bool = False,
-        file_pattern: Optional[str] = None,
-    ) -> Union[str, Dict]:
-        """Execute a ripgrep search.
+        context_lines: Optional[int] = None,
+        max_results: Optional[int] = None,
+    ) -> Union[str, List[Dict[str, Any]]]:
+        """Execute ripgrep search.
         
         Args:
-            pattern: The search pattern
-            path: Path to search in (overrides default search path)
+            pattern: Search pattern
+            path: Path to search in (overrides search_path if provided)
             output_format: Output format ('text' or 'json')
             context_lines: Number of context lines to include
-            case_sensitive: Whether to use case-sensitive search
-            file_pattern: Optional file pattern to filter search
+            max_results: Maximum number of results to return
             
         Returns:
-            Search results as text or JSON
+            Search results as string or JSON object
+            
+        Raises:
+            ValueError: If output format is invalid
+            RuntimeError: If search fails
         """
+        if output_format not in ["text", "json"]:
+            raise ValueError(f"Invalid output format: {output_format}")
+
         search_path = path or self._search_path
-        
-        cmd = ["rg"]
-        
-        # Add options
-        if not case_sensitive:
-            cmd.append("-i")
-        
+        cmd = ["rg", pattern]
+
         if output_format == "json":
-            cmd.append("--json")
-        
-        cmd.extend(["-C", str(context_lines)])  # Context lines
-        
-        if file_pattern:
-            cmd.extend(["-g", file_pattern])
-        
-        # Add pattern and path
-        cmd.extend([pattern, search_path])
-        
+            cmd.extend(["--json"])
+
+        if context_lines is not None:
+            cmd.extend(["-C", str(context_lines)])
+
+        if max_results is not None:
+            cmd.extend(["-m", str(max_results)])
+
+        cmd.append(search_path)
+
         try:
             result = subprocess.run(
                 cmd,
-                check=True,
                 capture_output=True,
-                text=True
+                text=True,
+                check=True
             )
             
             if output_format == "json":
-                # Parse JSON lines into a list of results
-                json_results = []
-                for line in result.stdout.splitlines():
-                    if line.strip():
-                        json_results.append(json.loads(line))
-                return {"results": json_results}
+                # Parse JSON output
+                lines = result.stdout.strip().split("\n")
+                json_results = [json.loads(line) for line in lines if line]
+                return json_results
             
             return result.stdout
-            
-        except subprocess.CalledProcessError as e:
-            if e.returncode == 1:  # No matches found
-                return "" if output_format == "text" else {"results": []}
-            logger.error(f"Search failed: {e.stderr}")
-            raise RuntimeError(f"Search failed: {e.stderr}") from e
-        
+
+        except Exception as e:
+            raise RuntimeError(f"Failed to execute search: {str(e)}")
+
     def get_stats(self, path: Optional[str] = None) -> Dict[str, int]:
         """Get search statistics for a path.
         

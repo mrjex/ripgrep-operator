@@ -10,7 +10,7 @@ description: |
 
 provides:
   search-api:
-    interface: ripgrep-search
+    interface: search
 requires:
   search-consumer:
     interface: search-pipeline

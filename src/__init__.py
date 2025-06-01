@@ -1,0 +1,1 @@
+"""Ripgrep operator package.""" 

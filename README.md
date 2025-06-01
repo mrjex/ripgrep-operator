@@ -66,6 +66,8 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 
 - **Secondary Source:** [Prometheus Operator](https://github.com/canonical/prometheus-k8s-operator/tree/main)
 
+- **Other Sources:** [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
+
 
 ### Technologies
 

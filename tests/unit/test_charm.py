@@ -59,6 +59,7 @@ class TestCharm(unittest.TestCase):
 
     def test_config_changed_missing_path(self):
         """Test config changed with missing search path."""
+        self.harness.begin()
         # Add config option before testing
         self.harness.update_config({})  # Reset config
         # Trigger config changed
@@ -70,6 +71,7 @@ class TestCharm(unittest.TestCase):
 
     def test_config_changed_valid_path(self):
         """Test config changed with valid search path."""
+        self.harness.begin()
         # Add config option before testing
         self.harness.update_config({"search_path": "/test/path"})
         # Trigger config changed
@@ -79,6 +81,7 @@ class TestCharm(unittest.TestCase):
     @patch("charm.RipgrepWrapper")
     def test_search_pattern_action(self, mock_ripgrep):
         """Test search pattern action."""
+        self.harness.begin()
         # Mock ripgrep search
         mock_instance = mock_ripgrep.return_value
         mock_instance.search.return_value = "test result"
@@ -100,6 +103,7 @@ class TestCharm(unittest.TestCase):
     @patch("charm.RipgrepWrapper")
     def test_search_pattern_action_failure(self, mock_ripgrep):
         """Test search pattern action failure."""
+        self.harness.begin()
         # Mock ripgrep search failure
         mock_instance = mock_ripgrep.return_value
         mock_instance.search.side_effect = RuntimeError("test error")
@@ -123,6 +127,7 @@ class TestCharm(unittest.TestCase):
 
     def test_search_relation_joined(self):
         """Test search relation joined event."""
+        self.harness.begin()
         # Add relation
         relation_id = self.harness.add_relation("search-api", "remote-app")
         self.harness.add_relation_unit(relation_id, "remote-app/0")
@@ -132,7 +137,7 @@ class TestCharm(unittest.TestCase):
         
         # Create and trigger relation joined event
         relation_event = ops.RelationJoinedEvent(
-            handle=self.harness.framework.get_relation_event("search-api", relation_id, "joined"),
+            handle=Mock(relation_name="search-api"),
             relation=relation,
             app=relation.app,
             unit=relation.app.get_unit("remote-app/0")

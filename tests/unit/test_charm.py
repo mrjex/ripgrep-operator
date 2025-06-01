@@ -59,11 +59,18 @@ class TestCharm(unittest.TestCase):
 
     def test_config_changed_missing_path(self):
         """Test config changed with missing search path."""
+        # Initialize without hooks
         self.harness.begin()
-        # Add config option before testing
-        self.harness.update_config({})  # Reset config
-        # Trigger config changed
+        
+        # Set initial state
+        self.harness.disable_hooks()
+        self.harness.update_config({})  # Clear any existing config
+        self.harness.enable_hooks()
+        
+        # Trigger config changed explicitly
         self.harness.charm._on_config_changed(ops.ConfigChangedEvent(Mock()))
+        
+        # Verify status
         self.assertEqual(
             self.harness.model.unit.status,
             BlockedStatus("search_path configuration required")
@@ -127,21 +134,28 @@ class TestCharm(unittest.TestCase):
 
     def test_search_relation_joined(self):
         """Test search relation joined event."""
+        # Initialize without hooks
         self.harness.begin()
-        # Add relation
-        relation_id = self.harness.add_relation("search-api", "remote-app")
-        self.harness.add_relation_unit(relation_id, "remote-app/0")
         
-        # Get the relation
+        # Set up relation
+        self.harness.set_leader(True)  # Ensure we're the leader
+        relation_id = self.harness.add_relation("search-api", "remote-app")
+        remote_unit_id = "remote-app/0"
+        self.harness.add_relation_unit(relation_id, remote_unit_id)
+        
+        # Get the relation and remote unit
         relation = self.harness.model.get_relation("search-api")
+        remote_unit = self.harness.model.get_unit(remote_unit_id)
         
         # Create and trigger relation joined event
         relation_event = ops.RelationJoinedEvent(
             handle=Mock(relation_name="search-api"),
             relation=relation,
             app=relation.app,
-            unit=relation.app.get_unit("remote-app/0")
+            unit=remote_unit
         )
+        
+        # Trigger the event
         self.harness.charm._on_search_relation_joined(relation_event)
         
         # Check status

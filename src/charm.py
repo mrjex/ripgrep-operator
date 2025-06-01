@@ -65,9 +65,10 @@ class RipgrepOperatorCharm(CharmBase):
     def _on_config_changed(self, event: ConfigChangedEvent) -> None:
         """Handle changed configuration."""
         # Fetch current config
-        search_path = self.config["search_path"]
+        search_path = self.config.get("search_path")
         
-        if not search_path:
+        # Always check config and set status accordingly
+        if not search_path or search_path == ".":  # Check for default value too
             self.unit.status = BlockedStatus("search_path configuration required")
             return
             
@@ -101,10 +102,14 @@ class RipgrepOperatorCharm(CharmBase):
 
     def _on_search_relation_joined(self, event: ops.RelationJoinedEvent) -> None:
         """Handle new search relation."""
+        # Always start in waiting status for new relations
+        self.unit.status = WaitingStatus("Waiting for search relation data")
+        
+        # Only change to active if we have all required data
         if self._search_provider.is_ready():
-            self.unit.status = ActiveStatus()
-        else:
-            self.unit.status = WaitingStatus("Waiting for search relation data")
+            relation = self._charm.model.get_relation(self._search_provider._relation_name)
+            if relation and relation.data[self.app]:
+                self.unit.status = ActiveStatus()
 
 if __name__ == "__main__":
     main(RipgrepOperatorCharm)

@@ -1,0 +1,13 @@
+options:
+  search_path:
+    type: string
+    default: "."
+    description: "Default path to search in"
+  max_results:
+    type: int
+    default: 1000
+    description: "Maximum number of search results to return"
+  default_context_lines:
+    type: int
+    default: 2
+    description: "Number of context lines to show around matches" 

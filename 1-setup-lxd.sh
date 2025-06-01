@@ -25,6 +25,9 @@ charmcraft pack
 
 # 8. Deploy and test
 deployAndTest() {
+    # Initialize Juju
+    juju bootstrap localhost
+
     # Create a test model
     juju add-model test
 
@@ -33,4 +36,6 @@ deployAndTest() {
 
     # Test a search
     juju run-action ripgrep-operator/0 search-pattern pattern="test"
+
+    juju status
 }

@@ -41,28 +41,138 @@ init_lxd() {
 setup_network() {
     echo -e "${YELLOW}Setting up LXD network...${NC}"
     
+    # Enable IP forwarding
+    echo "Enabling IP forwarding..."
+    sudo sysctl -w net.ipv4.ip_forward=1
+    
+    # Load bridge module
+    echo "Loading bridge module..."
+    sudo modprobe bridge
+    sudo modprobe br_netfilter
+    
+    # Enable bridge-nf-call-iptables
+    echo "Configuring bridge networking..."
+    sudo sysctl -w net.bridge.bridge-nf-call-iptables=1
+    
     # Remove existing network if it exists
     echo "Cleaning up existing network configuration..."
-    lxc profile device remove default eth0 || true
-    lxc network delete lxdbr0 || true
+    lxc profile device remove default eth0 2>/dev/null || true
+    lxc network delete lxdbr0 2>/dev/null || true
     
-    # Create new network with specific settings
-    echo "Creating new network..."
-    lxc network create lxdbr0 \
+    # Get WSL DNS server
+    WSL_DNS=$(grep nameserver /etc/resolv.conf | awk '{print $2}' | head -n 1)
+    echo "WSL DNS server: ${WSL_DNS}"
+    
+    # First create network with basic settings
+    echo "Creating network with basic settings..."
+    if ! lxc network create lxdbr0 \
         ipv4.address=10.10.10.1/24 \
         ipv4.nat=true \
         ipv4.dhcp=true \
         ipv4.dhcp.ranges=10.10.10.2-10.10.10.254 \
-        dns.domain=lxd \
+        ipv4.firewall=true \
         dns.mode=managed \
-        dns.nameservers=8.8.8.8,8.8.4.4 \
-        ipv6.address=none
+        dns.domain=lxd \
+        ipv6.address=none \
+        ipv6.nat=false; then
+        echo -e "${RED}Failed to create basic network${NC}"
+        return 1
+    fi
 
+    # Configure DNS and DHCP settings separately
+    echo "Configuring DNS and DHCP settings..."
+    if ! lxc network set lxdbr0 raw.dnsmasq "server=${WSL_DNS}
+dhcp-option=3,10.10.10.1
+dhcp-option=6,${WSL_DNS}
+log-queries
+log-dhcp
+dhcp-authoritative"; then
+        echo -e "${RED}Failed to set DNS and DHCP options${NC}"
+        return 1
+    fi
+
+    # Reset default profile
+    echo "Resetting default profile..."
+    lxc profile create default 2>/dev/null || true
+    
     # Add network to default profile
-    echo "Configuring default profile..."
-    lxc profile device add default eth0 nic nictype=bridged parent=lxdbr0 security.mac_filtering=false
+    echo "Adding network to default profile..."
+    lxc profile device add default eth0 nic \
+        nictype=bridged \
+        parent=lxdbr0 \
+        name=eth0
+
+    # Ensure bridge interface is up and configured
+    echo "Ensuring bridge interface is up..."
+    sudo ip link set lxdbr0 up
+    sudo ip link set dev lxdbr0 mtu 1500
+    sudo ip addr add 10.10.10.1/24 dev lxdbr0 2>/dev/null || true
+    
+    # Configure iptables
+    echo "Configuring iptables..."
+    sudo iptables -I FORWARD -i lxdbr0 -j ACCEPT
+    sudo iptables -I FORWARD -o lxdbr0 -j ACCEPT
+    sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -j MASQUERADE
+
+    # Wait for interface to come up
+    echo "Waiting for interface to stabilize..."
+    sleep 5
+
+    # Create a test container to force bridge activation
+    echo "Creating test container to activate bridge..."
+    lxc launch ubuntu:20.04 test-bridge-activation
+    sleep 10
+    lxc delete -f test-bridge-activation
+
+    # Verify network creation
+    echo -e "\nVerifying network configuration:"
+    if ! lxc network show lxdbr0; then
+        echo -e "${RED}Failed to verify network configuration${NC}"
+        return 1
+    fi
+    
+    # Test network status
+    echo -e "\nChecking network status:"
+    if ! lxc network list | grep lxdbr0; then
+        echo -e "${RED}Network not found in network list${NC}"
+        return 1
+    fi
+    
+    # Check bridge interface status
+    echo -e "\n${YELLOW}Bridge Interface Status:${NC}"
+    ip link show lxdbr0
+    ip addr show lxdbr0
     
     echo -e "${GREEN}Network setup complete - OK${NC}"
+    
+    # Show current WSL network interface for debugging
+    echo -e "\n${YELLOW}WSL Network Interface:${NC}"
+    ip addr show eth0
+
+    # Show DNS configuration
+    echo -e "\n${YELLOW}DNS Configuration:${NC}"
+    cat /etc/resolv.conf
+
+    # Show dnsmasq configuration
+    echo -e "\n${YELLOW}DNSMasq Configuration:${NC}"
+    lxc network get lxdbr0 raw.dnsmasq
+
+    # Show routing table
+    echo -e "\n${YELLOW}Routing Table:${NC}"
+    ip route
+
+    # Show iptables NAT rules
+    echo -e "\n${YELLOW}IPTables NAT Rules:${NC}"
+    sudo iptables -t nat -L POSTROUTING -n -v
+
+    # Verify bridge forwarding is enabled
+    echo -e "\n${YELLOW}Bridge Forwarding Status:${NC}"
+    sysctl net.bridge.bridge-nf-call-iptables
+    sysctl net.ipv4.ip_forward
+
+    # Final connectivity test
+    echo -e "\n${YELLOW}Testing bridge connectivity:${NC}"
+    ping -c 1 -W 1 10.10.10.1
 }
 
 # Test container networking
@@ -163,8 +273,6 @@ main() {
         esac
     done
 }
-
-
 
 # Run main function
 main

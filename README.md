@@ -64,11 +64,18 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 
 ### Open Source Operators
 
-- **Primary Source:** [Postgresql Operator](https://github.com/canonical/postgresql-operator/tree/main?tab=security-ov-file) 
+**Primary Sources:**
 
-- **Secondary Source:** [Prometheus Operator](https://github.com/canonical/prometheus-k8s-operator/tree/main)
+- [Postgresql Operator](https://github.com/canonical/postgresql-operator/tree/main?tab=security-ov-file)
+- [Hydra Operator](https://github.com/canonical/hydra-operator)
 
-- **Other Sources:** [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
+**Secondary Sources:**
+
+- [Prometheus Operator](https://github.com/canonical/prometheus-k8s-operator/tree/main)
+
+**Other Sources:**
+
+- [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
 
 
 ### Technologies

@@ -74,20 +74,15 @@ setup_network() {
         dns.mode=managed \
         dns.domain=lxd \
         ipv6.address=none \
-        ipv6.nat=false; then
-        echo -e "${RED}Failed to create basic network${NC}"
-        return 1
-    fi
-
-    # Configure DNS and DHCP settings separately
-    echo "Configuring DNS and DHCP settings..."
-    if ! lxc network set lxdbr0 raw.dnsmasq "server=${WSL_DNS}
+        ipv6.nat=false \
+        dns.nameservers="${WSL_DNS}" \
+        raw.dnsmasq="server=${WSL_DNS}
+dhcp-authoritative
 dhcp-option=3,10.10.10.1
 dhcp-option=6,${WSL_DNS}
 log-queries
-log-dhcp
-dhcp-authoritative"; then
-        echo -e "${RED}Failed to set DNS and DHCP options${NC}"
+log-dhcp"; then
+        echo -e "${RED}Failed to create basic network${NC}"
         return 1
     fi
 
@@ -112,7 +107,7 @@ dhcp-authoritative"; then
     echo "Configuring iptables..."
     sudo iptables -I FORWARD -i lxdbr0 -j ACCEPT
     sudo iptables -I FORWARD -o lxdbr0 -j ACCEPT
-    sudo iptables -t nat -A POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -j MASQUERADE
+    sudo iptables -t nat -I POSTROUTING -s 10.10.10.0/24 ! -d 10.10.10.0/24 -j MASQUERADE
 
     # Wait for interface to come up
     echo "Waiting for interface to stabilize..."

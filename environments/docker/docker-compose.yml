@@ -7,21 +7,26 @@ services:
       dockerfile: Dockerfile
     container_name: ripgrep-dev
     hostname: ripgrep-dev
-    privileged: true  # Required for systemd and LXD
+    privileged: true
     security_opt:
-      - seccomp:unconfined  # Required for nested containers
+      - seccomp:unconfined
       - apparmor:unconfined
     volumes:
       - ../..:/workspace/ripgrep-operator:cached
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /lib/modules:/lib/modules:ro
+      - /var/lib/snapd:/var/lib/snapd:rw
+      - /snap:/snap:rw
+      - snapdata:/var/snap
     tmpfs:
-      - /tmp
-      - /run
-      - /run/lock
+      - /tmp:exec,mode=1777
+      - /run:exec,mode=1777
+      - /run/lock:exec,mode=1777
+      - /run/snapd.socket
     environment:
       - TERM=xterm-256color
       - SNAP_COMMON=/var/snap/common
+      - container=docker
     networks:
       - ripgrep-net
     deploy:
@@ -30,8 +35,20 @@ services:
           cpus: '2'
           memory: 4G
     restart: unless-stopped
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_TIME
+      - SYS_RESOURCE
+      - SYS_MODULE
+      - MKNOD
+    devices:
+      - /dev/fuse
 
 networks:
   ripgrep-net:
     name: ripgrep-net
     driver: bridge
+
+volumes:
+  snapdata:

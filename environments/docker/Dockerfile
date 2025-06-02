@@ -12,6 +12,8 @@ STOPSIGNAL SIGRTMIN+3
 RUN apt-get update && apt-get install -y \
     systemd \
     systemd-sysv \
+    dbus \
+    dbus-user-session \
     snapd \
     curl \
     wget \
@@ -19,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     sudo \
+    udev \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
@@ -50,4 +53,4 @@ WORKDIR /workspace/ripgrep-operator
 
 # Use systemd as entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/lib/systemd/systemd"]
+CMD ["/sbin/init"]

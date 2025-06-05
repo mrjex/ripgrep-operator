@@ -6,8 +6,9 @@ wait_for_snapd() {
     local max_attempts=30
     local attempt=1
     
-    # Ensure snapd socket directory exists
+    # Ensure snapd socket directory exists and is clean
     mkdir -p /run/snapd
+    rm -f /run/snapd.socket
     
     # Wait for dbus to be ready
     while ! dbus-send --system --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.ListNames >/dev/null 2>&1; do
@@ -15,11 +16,12 @@ wait_for_snapd() {
         sleep 1
     done
     
-    # Start snapd service if not running
-    if ! systemctl is-active snapd >/dev/null 2>&1; then
-        echo "Starting snapd service..."
-        systemctl start snapd.service snapd.socket
-    fi
+    # Stop any existing snapd services
+    systemctl stop snapd.service snapd.socket || true
+    
+    # Start snapd service
+    echo "Starting snapd service..."
+    systemctl start snapd.socket snapd.service
     
     while ! snap list >/dev/null 2>&1; do
         if [ $attempt -ge $max_attempts ]; then
@@ -62,9 +64,9 @@ setup_systemd() {
     echo "Setting up systemd..."
     
     # Mount necessary filesystems
-    mount -t proc proc /proc
-    mount -t sysfs sys /sys
-    mount -t tmpfs tmpfs /run
+    mount -t proc proc /proc || true
+    mount -t sysfs sys /sys || true
+    mount -t tmpfs tmpfs /run || true
     mkdir -p /run/lock
     
     # Start dbus

@@ -6,6 +6,7 @@
 
 import logging
 from typing import Dict, Optional
+import subprocess
 
 import ops
 from ops.charm import CharmBase, ConfigChangedEvent
@@ -27,6 +28,8 @@ class RipgrepOperatorCharm(CharmBase):
         self.framework.observe(self.on.config_changed, self._on_config_changed)
         self.framework.observe(self.on.ripgrep_pebble_ready, self._on_ripgrep_pebble_ready)
         self.framework.observe(self.on.search_pattern_action, self._on_search_pattern)
+        self.framework.observe(self.on.install, self._on_install)
+        self.framework.observe(self.on.analyze_action, self._on_analyze)
 
         # Interface observers
         self._search_provider = SearchProvider(self)
@@ -110,6 +113,44 @@ class RipgrepOperatorCharm(CharmBase):
             relation = self.model.get_relation(self._search_provider._relation_name)
             if relation and relation.data.get(self.app):
                 self.unit.status = ActiveStatus()
+
+    def _on_install(self, _):
+        """Install required snaps during charm installation."""
+        try:
+            # Install both ripgrep and your analyzer
+            subprocess.run(["snap", "install", "ripgrep", "--classic"], check=True)
+            subprocess.run(["snap", "install", "debian-pkg-analyzer"], check=True)
+            self.unit.status = ActiveStatus()
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Failed to install required snaps: {e}")
+            self.unit.status = BlockedStatus("Failed to install required snaps")
+
+    def _on_analyze(self, event):
+        """Handle the analyze action."""
+        try:
+            # First, use debian-pkg-analyzer to get package info
+            pkg_name = event.params["package"]
+            analysis = subprocess.run(
+                ["debian-pkg-analyzer", "compare", pkg_name],
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            
+            # Then use ripgrep to search through the results
+            search_pattern = event.params.get("pattern", "")
+            if search_pattern:
+                rg_results = subprocess.run(
+                    ["rg", search_pattern, analysis.stdout],
+                    capture_output=True,
+                    text=True
+                )
+                event.set_results({"matches": rg_results.stdout.splitlines()})
+            else:
+                event.set_results({"analysis": analysis.stdout})
+                
+        except subprocess.CalledProcessError as e:
+            event.fail(f"Analysis failed: {e}")
 
 if __name__ == "__main__":
     main(RipgrepOperatorCharm)

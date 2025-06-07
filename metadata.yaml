@@ -1,12 +1,9 @@
 name: ripgrep-operator
-display-name: Ripgrep Search Operator
-summary: Cloud-native text search capabilities using ripgrep
+display-name: Ripgrep Operator
+summary: Operator for efficient content searching with ripgrep
 description: |
-  A Juju charm that provides ripgrep functionality as a service,
-  enabling remote text search capabilities across different
-  architectures and deployment scenarios. It wraps the ripgrep
-  snap package and exposes its functionality through standardized
-  interfaces and actions.
+  A Juju charm operator that provides efficient content searching capabilities
+  using ripgrep, integrated with debian-pkg-analyzer for package analysis.
 
 provides:
   search-api:
@@ -14,11 +11,17 @@ provides:
 requires:
   search-consumer:
     interface: search-pipeline
+  debian-analyzer:
+    interface: debian-pkg-analyzer
+    scope: container
 
 containers:
   ripgrep:
     resource: ripgrep-image
     description: Container running ripgrep search service
+    mounts:
+      - storage: data
+        location: /data
 
 resources:
   ripgrep-image:
@@ -29,4 +32,7 @@ storage:
   search-cache:
     type: filesystem
     location: /cache
-    description: Cache storage for search results 
+    description: Cache storage for search results
+  data:
+    type: filesystem
+    description: Storage for analysis data 

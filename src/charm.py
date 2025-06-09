@@ -7,6 +7,7 @@
 import logging
 from typing import Dict, Optional
 import subprocess
+import os
 
 import ops
 from ops.charm import CharmBase, ConfigChangedEvent
@@ -30,6 +31,10 @@ class RipgrepOperatorCharm(CharmBase):
         self.framework.observe(self.on.search_pattern_action, self._on_search_pattern)
         self.framework.observe(self.on.install, self._on_install)
         self.framework.observe(self.on.analyze_action, self._on_analyze)
+        
+        # Storage observers
+        self.framework.observe(self.on.data_storage_attached, self._on_storage_attached)
+        self.framework.observe(self.on.search_cache_storage_attached, self._on_storage_attached)
 
         # Interface observers
         self._search_provider = SearchProvider(self)
@@ -40,6 +45,18 @@ class RipgrepOperatorCharm(CharmBase):
 
         # Initialize ripgrep wrapper
         self._ripgrep = RipgrepWrapper()
+
+    def _on_storage_attached(self, event):
+        """Handle storage attachment."""
+        if isinstance(event, ops.StorageAttachedEvent):
+            storage_name = event.storage.name
+            storage_location = event.storage.location
+            
+            # Ensure storage directory exists and is writable
+            os.makedirs(storage_location, mode=0o755, exist_ok=True)
+            
+            logger.info(f"Storage {storage_name} attached at {storage_location}")
+            self.unit.status = ActiveStatus()
 
     def _on_ripgrep_pebble_ready(self, event: ops.PebbleReadyEvent) -> None:
         """Handle pebble ready event."""

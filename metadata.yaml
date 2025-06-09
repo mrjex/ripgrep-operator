@@ -29,10 +29,10 @@ resources:
     description: OCI image for ripgrep container
 
 storage:
-  search-cache:
-    type: filesystem
-    location: /cache
-    description: Cache storage for search results
   data:
     type: filesystem
-    description: Storage for analysis data 
+    description: Storage for analysis data
+    location: /data
+    minimum-size: 1G
+    multiple:
+      range: "1-1" 

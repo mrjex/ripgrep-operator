@@ -3,7 +3,8 @@
 charmcraft pack
 # juju deploy ./ripgrep-operator_ubuntu-20.04-amd64.charm
 # juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm
-juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm --storage data=10G --storage search-cache=1G
+# juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm --storage data=10G --storage search-cache=1G
+juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm --storage data=10G
 
 # Wait until the status is "active"
 juju status --watch 1s

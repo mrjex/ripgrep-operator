@@ -20,13 +20,19 @@ removeExternalDependencies() {
     rm -rf ~/ripgrep-operator
     mkdir ~/ripgrep-operator
 
-    cp -r /mnt/ripgrep-operator/* ~/ripgrep-operator/ 2>/dev/null || true
-    cp -r /mnt/ripgrep-operator/.* ~/ripgrep-operator/ 2>/dev/null || true
+    echo "Created new dir"
 
-    rm -rf ~/ripgrep-operator/.git
-    rm -rf ~/ripgrep-operator/.tox
-    rm -rf ~/ripgrep-operator/.venv
-    rm -rf ~/ripgrep-operator/venv
+    cp -r /mnt/ripgrep-operator/* ~/ripgrep-operator/ 2>/dev/null || true
+
+    echo "Copied first"
+
+    # cp -r /mnt/ripgrep-operator/.* ~/ripgrep-operator/ 2>/dev/null || true
+    # echo "Copied second"
+
+    # rm -rf ~/ripgrep-operator/.git
+    # rm -rf ~/ripgrep-operator/.tox
+    # rm -rf ~/ripgrep-operator/.venv
+    # rm -rf ~/ripgrep-operator/venv'
 
     chmod -R 755 ~/ripgrep-operator
 }
@@ -38,3 +44,5 @@ setupEnvironment() {
     
     pip install -r requirements.txt
 }
+
+removeExternalDependencies

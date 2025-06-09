@@ -42,8 +42,23 @@ class RipgrepOperatorCharm(CharmBase):
             self._on_search_relation_joined
         )
 
-        # Initialize ripgrep wrapper
-        self._ripgrep = RipgrepWrapper()
+        # Initialize ripgrep wrapper as None - will be created when needed
+        self._ripgrep = None
+
+    def _ensure_ripgrep(self):
+        """Ensure ripgrep is installed and wrapper is initialized."""
+        if self._ripgrep is None:
+            # First ensure ripgrep is installed
+            try:
+                subprocess.run(["snap", "install", "ripgrep", "--classic"], check=True)
+            except subprocess.CalledProcessError as e:
+                logger.error(f"Failed to install ripgrep: {e}")
+                raise RuntimeError("Failed to install ripgrep") from e
+
+            # Now initialize the wrapper
+            self._ripgrep = RipgrepWrapper()
+
+        return self._ripgrep
 
     def _on_storage_attached(self, event):
         """Handle storage attachment."""
@@ -91,9 +106,12 @@ class RipgrepOperatorCharm(CharmBase):
             self.unit.status = BlockedStatus("search_path configuration required")
             return
 
-        # Update search path in ripgrep wrapper
-        self._ripgrep.set_search_path(search_path)
-        self.unit.status = ActiveStatus()
+        try:
+            # Update search path in ripgrep wrapper
+            self._ensure_ripgrep().set_search_path(search_path)
+            self.unit.status = ActiveStatus()
+        except Exception as e:
+            self.unit.status = BlockedStatus(str(e))
 
     def _on_search_pattern(self, event: ops.ActionEvent) -> None:
         """Handle search pattern action."""
@@ -105,7 +123,7 @@ class RipgrepOperatorCharm(CharmBase):
             self.unit.status = MaintenanceStatus("Executing search")
 
             # Execute search
-            result = self._ripgrep.search(
+            result = self._ensure_ripgrep().search(
                 pattern=pattern,
                 path=path,
                 output_format=output_format
@@ -133,9 +151,9 @@ class RipgrepOperatorCharm(CharmBase):
     def _on_install(self, _):
         """Install required snaps during charm installation."""
         try:
-            # Install both ripgrep and your analyzer
-            subprocess.run(["snap", "install", "ripgrep", "--classic"], check=True)
+            # Install analyzer
             subprocess.run(["snap", "install", "debian-pkg-analyzer"], check=True)
+            # Ripgrep will be installed when needed via _ensure_ripgrep()
             self.unit.status = ActiveStatus()
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to install required snaps: {e}")
@@ -144,7 +162,10 @@ class RipgrepOperatorCharm(CharmBase):
     def _on_analyze(self, event):
         """Handle the analyze action."""
         try:
-            # First, use debian-pkg-analyzer to get package info
+            # First ensure ripgrep is available
+            self._ensure_ripgrep()
+
+            # Then use debian-pkg-analyzer to get package info
             pkg_name = event.params["package"]
             analysis = subprocess.run(
                 ["debian-pkg-analyzer", "compare", pkg_name],

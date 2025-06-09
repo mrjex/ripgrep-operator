@@ -1,6 +1,6 @@
 # 1. Clean up the current deployment
 juju remove-application ripgrep-operator --force
-juju remove-machine 4 --force
+juju remove-machine 8 --force
 
 # 2. Wait a few seconds and verify cleanup
 juju status

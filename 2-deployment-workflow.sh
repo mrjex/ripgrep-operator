@@ -2,6 +2,7 @@
 
 charmcraft pack
 juju deploy ./ripgrep-operator_ubuntu-20.04-amd64.charm
+# juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm
 
 # Check status
 juju status

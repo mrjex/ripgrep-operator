@@ -22,4 +22,4 @@ analyze:
     pattern:
       type: string
       description: "Optional pattern to search for in the analysis results"
-      default: "" 
+      default: ""

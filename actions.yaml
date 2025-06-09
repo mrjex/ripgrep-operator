@@ -1,0 +1,25 @@
+search-pattern:
+  description: "Search for a pattern in files"
+  params:
+    pattern:
+      type: string
+      description: "The pattern to search for"
+    path:
+      type: string
+      description: "The path to search in (defaults to .)"
+      default: "."
+    format:
+      type: string
+      description: "Output format (text or json)"
+      default: "text"
+
+analyze:
+  description: "Analyze a package and optionally search through the results"
+  params:
+    package:
+      type: string
+      description: "The package to analyze"
+    pattern:
+      type: string
+      description: "Optional pattern to search for in the analysis results"
+      default: "" 

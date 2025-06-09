@@ -14,5 +14,4 @@ fi
 . "$VENV_DIR/bin/activate"
 
 # Run the charm
-# PYTHONPATH=.. exec python3 -m charm "$@"
-PYTHONPATH=.. exec python3 -m charm.charm "$@"
+PYTHONPATH=. exec python3 -m src.charm.charm "$@"

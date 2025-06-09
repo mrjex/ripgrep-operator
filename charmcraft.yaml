@@ -8,15 +8,14 @@ bases:
 
 parts:
   charm:
+    charm-python-packages: [ops>=2.0.0]
     source: .
-    plugin: python
-    python-packages:
-      - ops
-      - pytest
-      - pytest-asyncio
+    plugin: charm
     build-packages:
       - git
       - make
+      - python3-pip
+      - python3-venv
 
 actions:
   search-pattern:

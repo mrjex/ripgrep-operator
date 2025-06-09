@@ -7,4 +7,4 @@ juju deploy ./ripgrep-operator_ubuntu-20.04-amd64.charm
 juju status
 
 # Run an analysis
-juju run-action ripgrep-operator/0 analyze package=nginx pattern="version"
+juju run-action ripgrep-operator/0 analyze package=nginx pattern="version

@@ -30,7 +30,7 @@ class RipgrepOperatorCharm(CharmBase):
         self.framework.observe(self.on.ripgrep_pebble_ready, self._on_ripgrep_pebble_ready)       
         self.framework.observe(self.on.search_pattern_action, self._on_search_pattern)
         self.framework.observe(self.on.install, self._on_install)
-        self.framework.observe(self.on.analyze, self._on_analyze)
+        self.framework.observe(self.on.analyze_action, self._on_analyze)
 
         # Storage observers
         self.framework.observe(self.on.data_storage_attached, self._on_storage_attached)

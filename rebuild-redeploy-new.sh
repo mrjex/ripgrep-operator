@@ -37,7 +37,7 @@ monitorCharmStatus() {
 
 # juju status # Check current revision number
 
-cleanPreviousDeployment 15
+cleanPreviousDeployment ${1}
 
 echo "Deploy new version"
 

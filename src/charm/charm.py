@@ -27,14 +27,14 @@ class RipgrepOperatorCharm(CharmBase):
 
         # Core charm observers
         self.framework.observe(self.on.config_changed, self._on_config_changed)
-        self.framework.observe(self.on.ripgrep_pebble_ready, self._on_ripgrep_pebble_ready)
+        self.framework.observe(self.on.ripgrep_pebble_ready, self._on_ripgrep_pebble_ready)       
         self.framework.observe(self.on.search_pattern_action, self._on_search_pattern)
         self.framework.observe(self.on.install, self._on_install)
-        self.framework.observe(self.on.analyze_action, self._on_analyze)
-        
+        self.framework.observe(self.on.analyze, self._on_analyze)
+
         # Storage observers
         self.framework.observe(self.on.data_storage_attached, self._on_storage_attached)
-        self.framework.observe(self.on.search_cache_storage_attached, self._on_storage_attached)
+        self.framework.observe(self.on.search_cache_storage_attached, self._on_storage_attached)  
 
         # Interface observers
         self._search_provider = SearchProvider(self)
@@ -51,17 +51,17 @@ class RipgrepOperatorCharm(CharmBase):
         if isinstance(event, ops.StorageAttachedEvent):
             storage_name = event.storage.name
             storage_location = event.storage.location
-            
+
             # Ensure storage directory exists and is writable
             os.makedirs(storage_location, mode=0o755, exist_ok=True)
-            
+
             logger.info(f"Storage {storage_name} attached at {storage_location}")
             self.unit.status = ActiveStatus()
 
     def _on_ripgrep_pebble_ready(self, event: ops.PebbleReadyEvent) -> None:
         """Handle pebble ready event."""
         container = event.workload
-        
+
         # Define an initial Pebble layer configuration
         pebble_layer = {
             "summary": "ripgrep layer",
@@ -75,23 +75,23 @@ class RipgrepOperatorCharm(CharmBase):
                 }
             },
         }
-        
+
         # Add initial Pebble config layer
         container.add_layer("ripgrep", pebble_layer, combine=True)
         container.autostart()
-        
+
         self.unit.status = ActiveStatus()
 
     def _on_config_changed(self, event: ConfigChangedEvent) -> None:
         """Handle changed configuration."""
         # Fetch current config
         search_path = self.config.get("search_path")
-        
+
         # Always check config and set status accordingly
         if not search_path or search_path == ".":  # Check for default value too
             self.unit.status = BlockedStatus("search_path configuration required")
             return
-            
+
         # Update search path in ripgrep wrapper
         self._ripgrep.set_search_path(search_path)
         self.unit.status = ActiveStatus()
@@ -102,19 +102,19 @@ class RipgrepOperatorCharm(CharmBase):
             pattern = event.params["pattern"]
             path = event.params.get("path", ".")
             output_format = event.params.get("format", "text")
-            
+
             self.unit.status = MaintenanceStatus("Executing search")
-            
+
             # Execute search
             result = self._ripgrep.search(
                 pattern=pattern,
                 path=path,
                 output_format=output_format
             )
-            
+
             event.set_results({"result": result})
             self.unit.status = ActiveStatus()
-            
+
         except Exception as e:
             logger.error(f"Search failed: {str(e)}")
             event.fail(f"Search failed: {str(e)}")
@@ -124,7 +124,7 @@ class RipgrepOperatorCharm(CharmBase):
         """Handle new search relation."""
         # Always start in waiting status for new relations
         self.unit.status = WaitingStatus("Waiting for search relation data")
-        
+
         # Only change to active if we have all required data
         if self._search_provider.is_ready():
             relation = self.model.get_relation(self._search_provider._relation_name)
@@ -153,7 +153,7 @@ class RipgrepOperatorCharm(CharmBase):
                 text=True,
                 check=True
             )
-            
+
             # Then use ripgrep to search through the results
             search_pattern = event.params.get("pattern", "")
             if search_pattern:
@@ -165,9 +165,9 @@ class RipgrepOperatorCharm(CharmBase):
                 event.set_results({"matches": rg_results.stdout.splitlines()})
             else:
                 event.set_results({"analysis": analysis.stdout})
-                
+
         except subprocess.CalledProcessError as e:
             event.fail(f"Analysis failed: {e}")
 
 if __name__ == "__main__":
-    main(RipgrepOperatorCharm)
+    main(RipgrepOperatorCharm) 

@@ -3,18 +3,16 @@
 # Change to the charm directory
 cd "$(dirname "$0")"
 
+# Ensure we have python3-venv and pip installed
+apt update
+apt install -y python3-venv python3-pip
+
 # Set up Python environment
-VENV_DIR=".venv"
-if [ ! -d "$VENV_DIR" ]; then
-    python3 -m venv "$VENV_DIR"
-    # "$VENV_DIR/bin/pip" install -r requirements.txt
-fi
+python3 -m venv .venv
+source .venv/bin/activate
 
-# Activate virtual environment
-. "$VENV_DIR/bin/activate"
-
-# TODO: Resolve by installing 'pip' first and then requirements.txt
-# "$VENV_DIR/bin/pip" install -r requirements.txt
+# Install requirements
+pip install -r requirements.txt
 
 # Run the charm
 PYTHONPATH=. exec python3 -m src.charm.charm "$@"

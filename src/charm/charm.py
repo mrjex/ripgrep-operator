@@ -34,7 +34,6 @@ class RipgrepOperatorCharm(CharmBase):
 
         # Storage observers
         self.framework.observe(self.on.data_storage_attached, self._on_storage_attached)
-        self.framework.observe(self.on.search_cache_storage_attached, self._on_storage_attached)  
 
         # Interface observers
         self._search_provider = SearchProvider(self)

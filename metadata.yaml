@@ -1,9 +1,8 @@
 name: ripgrep-operator
 display-name: Ripgrep Operator
-summary: Operator for efficient content searching with ripgrep
+summary: Ripgrep operator with Debian package analysis capabilities
 description: |
-  A Juju charm operator that provides efficient content searching capabilities
-  using ripgrep, integrated with debian-pkg-analyzer for package analysis.
+  A Juju charm operator for managing ripgrep operations and Debian package analysis.
 
 provides:
   search-api:
@@ -14,6 +13,10 @@ requires:
   debian-analyzer:
     interface: debian-pkg-analyzer
     scope: container
+  logging:
+    interface: loki-push-api
+  metrics:
+    interface: prometheus_scrape
 
 containers:
   ripgrep:
@@ -27,6 +30,10 @@ resources:
   ripgrep-image:
     type: oci-image
     description: OCI image for ripgrep container
+  debian-pkg-analyzer:
+    type: file
+    filename: debian-pkg-analyzer.snap
+    description: "Debian Package Analyzer Snap"
 
 storage:
   data:
@@ -35,4 +42,8 @@ storage:
     location: /data
     minimum-size: 1G
     multiple:
-      range: "1-1" 
+      range: "1-1"
+
+peers:
+  replicas:
+    interface: ripgrep-replica 

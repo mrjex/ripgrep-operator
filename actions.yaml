@@ -1,3 +1,44 @@
+analyze-debian:
+  description: "Analyze Debian packages based on specified criteria"
+  params:
+    architecture:
+      type: string
+      description: "Architecture to analyze (arm64, amd64)"
+    count:
+      type: integer
+      description: "Number of packages to analyze"
+      default: 20
+    country:
+      type: string
+      description: "Mirror country code (e.g., us, uk)"
+      default: "us"
+    release:
+      type: string
+      description: "Debian release name (e.g., bullseye, buster)"
+      default: "bullseye"
+    format:
+      type: string
+      description: "Output format (default or json)"
+      default: "default"
+
+compare-debian:
+  description: "Compare Debian package metrics between different parameters"
+  params:
+    comparison_type:
+      type: string
+      description: "Type of comparison (arch, release, mirror)"
+      enum: ["arch", "release", "mirror"]
+    value1:
+      type: string
+      description: "First value to compare"
+    value2:
+      type: string
+      description: "Second value to compare"
+    architecture:
+      type: string
+      description: "Architecture for comparison (optional)"
+      default: "amd64"
+
 search-pattern:
   description: "Search for a pattern in files"
   params:

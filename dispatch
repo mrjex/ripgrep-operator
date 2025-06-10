@@ -20,8 +20,13 @@ fi
 
 pip install -r requirements.txt
 
-# Add the current directory to PYTHONPATH
-export PYTHONPATH="${PWD}:${PYTHONPATH:-}"
+if [ ! -d "src" ]; then
+    echo "Error: src directory not found in $(pwd)"
+    exit 1
+fi
+
+# Add both the charm root and src directories to PYTHONPATH (so that both local and depoyed environments work)
+export PYTHONPATH="${PWD}:${PWD}/src:${PYTHONPATH:-}"
 
 # Run the charm
 if [ ! -d "src/charm" ]; then

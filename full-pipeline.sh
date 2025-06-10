@@ -4,9 +4,8 @@ PREVIOUS_REVISION=${1}
 
 
 syncMountedDirectories() {
-    cd /mnt/ripgrep-operator
-
-    bash vm-management.sh
+    cd /
+    bash mnt/ripgrep-operator/vm-management.sh
 }
 
 
@@ -20,3 +19,4 @@ deployJujuCharm() {
 
 
 syncMountedDirectories
+deployJujuCharm

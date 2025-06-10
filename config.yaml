@@ -1,8 +1,10 @@
 options:
   search_path:
     type: string
-    default: "."
-    description: "Default path to search in"
+    default: "/data"
+    description: |
+      Path to search in. Defaults to the charm's data storage location.
+      Can be overridden using 'juju config ripgrep-operator search_path=<path>'
   max_results:
     type: int
     default: 1000

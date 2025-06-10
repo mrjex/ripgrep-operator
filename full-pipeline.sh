@@ -2,11 +2,21 @@
 
 PREVIOUS_REVISION=${1}
 
-cd /mnt/ripgrep-operator
 
-bash vm-management.sh
+syncMountedDirectories() {
+    cd /mnt/ripgrep-operator
+
+    bash vm-management.sh
+}
 
 
-cd ~/ripgrep-operator
+deployJujuCharm() {
+    cd ~/ripgrep-operator
 
-bash rebuild-redeploy-new.sh ${PREVIOUS_REVISION}
+    # TODO: In the rebuild script, add an argument to check if it should delete previous revision or not,
+    # and connect/pipe that argument in this script (it should be an optional parameter)
+    bash rebuild-redeploy-new.sh ${PREVIOUS_REVISION}
+}
+
+
+syncMountedDirectories

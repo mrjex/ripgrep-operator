@@ -18,7 +18,8 @@ parts:
       - python3-venv
     prime:
       - requirements.txt
-      - src/
-      - lib/
-      - bin/
+      - src/**
       - dispatch
+      - config.yaml
+      - metadata.yaml
+      - actions.yaml

@@ -77,8 +77,12 @@ class RipgrepWrapper:
                 cmd,
                 capture_output=True,
                 text=True,
-                check=True
+                check=False  # Don't raise on non-zero exit codes
             )
+            
+            # Exit code 1 means "no matches found" - this is normal
+            if result.returncode not in [0, 1]:
+                raise RuntimeError(f"Search failed with exit code {result.returncode}: {result.stderr}")
             
             if output_format == "json":
                 # Parse JSON output
@@ -86,7 +90,7 @@ class RipgrepWrapper:
                 json_results = [json.loads(line) for line in lines if line]
                 return json_results
             
-            return result.stdout
+            return result.stdout or ""  # Return empty string if no matches
 
         except Exception as e:
             raise RuntimeError(f"Failed to execute search: {str(e)}")

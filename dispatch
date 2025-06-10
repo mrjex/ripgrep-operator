@@ -1,10 +1,11 @@
 #!/bin/bash
+set -e  # Exit on error
 
 # Change to the charm directory
 cd "$(dirname "$0")"
 
 # Ensure we have python3-venv and pip installed
-apt update
+apt update -y
 apt install -y python3-venv python3-pip
 
 # Set up Python environment
@@ -12,10 +13,22 @@ python3 -m venv .venv
 source .venv/bin/activate
 
 # Install requirements
+if [ ! -f requirements.txt ]; then
+    echo "Error: requirements.txt not found in $(pwd)"
+    exit 1
+fi
+
 pip install -r requirements.txt
 
-# Run the charm with proper Python path
-export PYTHONPATH="${PYTHONPATH}:${PWD}/src"
+# Add the current directory to PYTHONPATH
+export PYTHONPATH="${PWD}:${PYTHONPATH:-}"
+
+# Run the charm
+if [ ! -d "src/charm" ]; then
+    echo "Error: src/charm directory not found in $(pwd)"
+    exit 1
+fi
+
 exec python3 -m src.charm.charm "$@"
 
 # PYTHONPATH=. exec python3 -m src.charm.charm "$@" # PREVIOUS

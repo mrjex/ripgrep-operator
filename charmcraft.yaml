@@ -16,3 +16,9 @@ parts:
       - make
       - python3-pip
       - python3-venv
+    prime:
+      - requirements.txt
+      - src/
+      - lib/
+      - bin/
+      - dispatch

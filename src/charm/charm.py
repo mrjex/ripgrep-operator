@@ -31,7 +31,6 @@ class RipgrepOperatorCharm(CharmBase):
         self.framework.observe(self.on.ripgrep_pebble_ready, self._on_ripgrep_pebble_ready)       
         self.framework.observe(self.on.search_pattern_action, self._on_search_pattern)
         self.framework.observe(self.on.install, self._on_install)
-        self.framework.observe(self.on.analyze_action, self._on_analyze)
         self.framework.observe(self.on.analyze_debian_action, self._on_analyze_debian)
         self.framework.observe(self.on.compare_debian_action, self._on_compare_debian)
 
@@ -174,36 +173,6 @@ class RipgrepOperatorCharm(CharmBase):
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to install snap: {e}")
             self.unit.status = BlockedStatus("Failed to install debian-pkg-analyzer")
-            
-    def _on_analyze(self, event):
-        """Handle the analyze action."""
-        try:
-            # First ensure ripgrep is available
-            self._ensure_ripgrep()
-
-            # Then use debian-pkg-analyzer to get package info
-            pkg_name = event.params["package"]
-            analysis = subprocess.run(
-                ["debian-pkg-analyzer", "compare", pkg_name],
-                capture_output=True,
-                text=True,
-                check=True
-            )
-
-            # Then use ripgrep to search through the results
-            search_pattern = event.params.get("pattern", "")
-            if search_pattern:
-                rg_results = subprocess.run(
-                    ["rg", search_pattern, analysis.stdout],
-                    capture_output=True,
-                    text=True
-                )
-                event.set_results({"matches": rg_results.stdout.splitlines()})
-            else:
-                event.set_results({"analysis": analysis.stdout})
-
-        except subprocess.CalledProcessError as e:
-            event.fail(f"Analysis failed: {e}")
 
     def _run_cli_command(self, cmd: list) -> Dict[str, str]:
         """Run a CLI command and return the result."""

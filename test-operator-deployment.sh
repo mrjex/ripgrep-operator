@@ -15,12 +15,14 @@ echo_status() {
     fi
 }
 
-# Get the current unit number
-UNIT_NUM=$(juju status --format=json | jq '.applications."ripgrep-operator".units | keys[0]' | tr -d '"' | cut -d'/' -f2)
-if [ -z "$UNIT_NUM" ]; then
-    echo "Error: Could not determine unit number"
-    exit 1
-fi
+# Get the current unit (revision) number of the juju model
+# UNIT_NUM=$(juju status --format=json | jq '.applications."ripgrep-operator".units | keys[0]' | tr -d '"' | cut -d'/' -f2)
+# if [ -z "$UNIT_NUM" ]; then
+#     echo "Error: Could not determine unit number"
+#     exit 1
+# fi
+
+UNIT_NUM=${1}
 
 echo "Testing ripgrep-operator deployment..."
 echo "Using unit: ripgrep-operator/$UNIT_NUM"
@@ -46,7 +48,7 @@ echo "Test 4: Creating test file in data storage"
 echo "This is a test file
 with multiple lines
 for testing ripgrep
-functionality" | juju ssh ripgrep-operator/$UNIT_NUM "cat > /data/test.txt"
+functionality" | juju ssh ripgrep-operator/$UNIT_NUM "sudo tee /data/test.txt > /dev/null"
 echo_status "Test file creation"
 
 # Test 5: Search in created file
@@ -64,7 +66,7 @@ echo "Test 7: Testing search with no matches"
 juju run ripgrep-operator/$UNIT_NUM search-pattern pattern="nonexistentpattern123"
 echo_status "No matches test"
 
-# Test 8: Test relation endpoints (if applicable)
+# Test 8: Test relation endpoints (not currently implemented - tests integration with other charms)
 echo "Test 8: Testing search API relation"
 # Deploy a test consumer charm if available
 # juju deploy test-consumer

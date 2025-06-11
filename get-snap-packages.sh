@@ -13,6 +13,12 @@ getPrivateCLI() {
     sudo cp -r ~/cli-assignment/debian-pkg-analyzer*.snap ~/ripgrep-operator
 
     sudo mv ~/ripgrep-operator/debian-pkg-analyzer*.snap ~/ripgrep-operator/debian-pkg-analyzer.snap
+
+    cd ~/ripgrep-operator
+    
+    # Fix permissions to make it readable
+    sudo chown ubuntu:ubuntu debian-pkg-analyzer.snap
+    chmod 644 debian-pkg-analyzer.snap
 }
 
 

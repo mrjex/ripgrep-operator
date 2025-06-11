@@ -1,3 +1,0 @@
-# Developer Scripts
-
-Note that this *ripgrep operator* supports both **LXD** and **Multipass**. While the former technology is designed for native Linux systems, an Ubuntu container with *systemd* support is used to simulate an environment for users with different operating systems than Linux. As for the latter technology, one can simply spin up a virtual machine. The setup and management for these technologies are contained in respective *.sh* files in this directory.

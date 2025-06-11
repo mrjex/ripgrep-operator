@@ -196,29 +196,46 @@ class RipgrepOperatorCharm(CharmBase):
 
     def _on_analyze_debian(self, event: ActionEvent):
         """Handle the analyze-debian action."""
-        # Build command from parameters
-        cmd = ["debian-pkg-analyzer"]
-        
-        # Add architecture
-        cmd.append(event.params["architecture"])
-        
-        # Add optional parameters
-        if "count" in event.params:
-            cmd.extend(["-n", str(event.params["count"])])
-        
-        if "country" in event.params:
-            cmd.extend(["-c", event.params["country"]])
+        try:
+            self.unit.status = MaintenanceStatus("Analyzing Debian packages")
             
-        if "release" in event.params:
-            cmd.extend(["-r", event.params["release"]])
+            # Build command from parameters
+            cmd = ["debian-pkg-analyzer"]
             
-        if event.params.get("format") == "json":
-            cmd.append("--format")
-            cmd.append("json")
+            # Add architecture as positional argument
+            cmd.append(event.params["architecture"])
             
-        # Run command and set results
-        result = self._run_cli_command(cmd)
-        event.set_results(result)
+            # Add optional parameters
+            if "count" in event.params:
+                cmd.extend(["-n", str(event.params["count"])])
+            
+            if "country" in event.params:
+                cmd.extend(["-c", event.params["country"]])
+                
+            if "release" in event.params:
+                cmd.extend(["-r", event.params["release"]])
+                
+            if event.params.get("format") == "json":
+                cmd.append("--format")
+                cmd.append("json")
+            
+            logger.debug(f"Running command: {' '.join(cmd)}")
+            
+            # Run command and set results
+            result = self._run_cli_command(cmd)
+            
+            if "error" in result:
+                logger.error(f"Command failed: {result['error']}")
+                event.fail(f"Analysis failed: {result['error']}")
+                self.unit.status = BlockedStatus(f"Analysis failed")
+            else:
+                event.set_results(result)
+                self.unit.status = ActiveStatus()
+                
+        except Exception as e:
+            logger.error(f"Analysis failed: {str(e)}")
+            event.fail(f"Analysis failed: {str(e)}")
+            self.unit.status = BlockedStatus(f"Analysis failed: {str(e)}")
 
     def _on_compare_debian(self, event: ActionEvent):
         """Handle the compare-debian action."""

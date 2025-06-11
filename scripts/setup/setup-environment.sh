@@ -35,6 +35,24 @@ setupTechnologies() {
 }
 
 
+# These packages typically prompt a menu requiring manual confirmation
+installManualPromptPackages() {
+    sudo apt-get update
+
+    sudo apt install python3-pip python3-venv python3-dev build-essential
+    sudo apt install -y jq
+}
+
+
+setupJuju() {
+    # Initialize Juju with LXD
+    juju bootstrap localhost lxd-controller
+
+    # Create a new model for development
+    juju add-model development
+}
+
+
 ##  MAIN  ##
 
 set -e  # Exit on error
@@ -46,8 +64,14 @@ sudo apt install -y snapd
 export PATH=$PATH:/snap/bin
 
 installTechnologies
-
 setupTechnologies
 
+echo "COMPLETED SETUP (STEP 1/3)"
 
-echo "COMPLETED SETUP"
+installManualPromptPackages
+
+echo "COMPLETED SETUP (STEP 2/3)"
+
+setupJuju
+
+echo "COMPLETED SETUP (STEP 3/3)"

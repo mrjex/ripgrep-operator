@@ -333,17 +333,21 @@ class RipgrepOperatorCharm(CharmBase):
                 logger.debug(f"Running search command: {' '.join(search_cmd)}")
                 search_result = self._run_cli_command(search_cmd)
                 
-                # Prepare final results with hyphenated keys
+                # Always prepare results as a dictionary
                 result = {
                     "analysis-output": analysis_result["output"],
                     "search-results": search_result.get("output", "No matches found"),
                     "search-pattern": event.params["search-pattern"]
                 }
                 
+                # If JSON format is requested, convert the values to JSON strings
                 if event.params.get("format") == "json":
-                    result = json.dumps(result)
+                    for key in result:
+                        if isinstance(result[key], (dict, list)):
+                            result[key] = json.dumps(result[key])
                 
-                event.set_results(result)  # Don't wrap in another dictionary
+                # Always set results as a dictionary
+                event.set_results(result)
                 self.unit.status = ActiveStatus()
                 
         except Exception as e:

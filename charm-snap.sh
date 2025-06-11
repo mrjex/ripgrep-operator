@@ -48,7 +48,7 @@ runAnalyzeSearchActionTests() {
     case-sensitive=true
 
     # Compare releases and search for specific packages
-    juju run ripgrep-operator/4 analyze-and-search \
+    juju run ripgrep-operator/5 analyze-and-search \
     mode=compare \
     comparison-type=release \
     value1=bullseye \

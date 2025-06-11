@@ -1,9 +1,5 @@
 
-
-# JUJU_MODEL_REVISION=15
-
 JUJU_MODEL_REVISION=${1}
-
 
 
 checkPythonError() {

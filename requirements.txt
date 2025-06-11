@@ -1,9 +1,9 @@
-ops>=2.3.0
-pytest>=7.0.0
-pytest-asyncio>=0.19.0
-coverage>=7.0.0
-pyright>=1.1.0
-ruff>=0.0.240
-codespell>=2.2.0
-setuptools>=65.0.0
-wheel>=0.38.0
+ops==2.3.0
+pytest==7.0.0
+pytest-asyncio==0.19.0
+coverage==7.0.0
+pyright>=1.1.300
+ruff==0.0.240 --only-binary :all:
+codespell==2.2.0
+setuptools==65.0.0
+wheel==0.38.0

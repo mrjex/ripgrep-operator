@@ -5,7 +5,6 @@
 [![Juju](https://img.shields.io/badge/Juju-2.9+-purple)](https://juju.is/)
 [![LXD](https://img.shields.io/badge/LXD-5.0+-orange)](https://linuxcontainers.org/lxd)
 [![Multipass](https://img.shields.io/badge/Multipass-1.12+-lightblue)](https://multipass.run)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-pending-yellow)](https://github.com/joel0/ripgrep-operator/actions)
 
 > A Juju charm that provides ripgrep functionality as a service, enabling remote text search capabilities across different architectures and deployment scenarios.
 
@@ -19,6 +18,21 @@
 
 ## Quick Start
 
+1. Setup Ubuntu environment
+
+2. Run `./scripts/setup/setup-environment.sh`
+
+
+Depending on your setup, you might need to manage a separate directory (a clone of the mounted one) in the virtual machine. This is to bypass strict Linux permissions.
+
+
+2.1 Run `./scripts/dev-lifecycle/sync-dir.sh`
+
+
+
+3. Run `./scripts/dev-lifecycle`
+
+
 ```bash
 # Deploy the charm
 juju deploy ripgrep-operator
@@ -26,30 +40,6 @@ juju deploy ripgrep-operator
 # Run a search
 juju run-action ripgrep-operator/0 search-pattern pattern="search_term"
 ```
-
-## Documentation
-
-- [Interface Documentation](docs/interfaces.md)
-- [Actions Documentation](docs/actions.md)
-- [Deployment Guide](docs/deployment.md)
-
-## Development
-
-```bash
-# Setup development environment
-./scripts/setup.sh
-
-# Run tests
-./scripts/test-multi-arch.sh
-```
-
-## License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-Ripgrep (`rg`) is a fast command-line search tool, like `grep`, but more efficient for recursive searches. It's commonly installed as a standalone binary or via package managers like `apt`, `brew`, or `snap`.
-
-In essence, this project uses the [Ripgrep Snap Package](https://snapcraft.io/ripgrep) as a baseline and extends it into a standalone deployed and orchestrated Charm component on Juju, tailored for a wider range of use cases.
 
 
 
@@ -77,19 +67,6 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 
 - [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
 
-
-### Technologies
-
-
-- LXD
-
-- Juju
-
-- Charm / Charmcraft
-- Charmhub
-
-- Snap / Snapcraft
-- Snapstore
 
 
 

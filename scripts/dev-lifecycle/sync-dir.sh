@@ -1,19 +1,4 @@
-##  Multipass VM Management  ##
-
-
-cleanPreviousArtifacts() {
-    rm -rf .tox
-    rm -rf build/
-    rm -f ripgrep-operator_*.charm
-}
-
-
-# Copy from the mounted directory to the home directory in the Multipass VM
-updateMultipass() {
-    cp -r /mnt/ripgrep-operator ~/ripgrep-operator
-}
-
-
+##  SYNC DIRECTORY - VM Management  ##
 
 # Remote git, tox and venv dependencies to copy the repository without conflicts
 removeExternalDependencies() {
@@ -37,12 +22,5 @@ removeExternalDependencies() {
     chmod -R 755 ~/ripgrep-operator
 }
 
-
-setupEnvironment() {
-    python3 -m venv .venv
-    source .venv/bin/activate
-    
-    pip install -r requirements.txt
-}
 
 removeExternalDependencies

@@ -24,7 +24,7 @@ analyze-debian:
 compare-debian:
   description: "Compare Debian package metrics between different parameters"
   params:
-    comparison_type:
+    type:
       type: string
       description: "Type of comparison (arch, release, mirror)"
       enum: ["arch", "release", "mirror"]
@@ -36,8 +36,7 @@ compare-debian:
       description: "Second value to compare"
     architecture:
       type: string
-      description: "Architecture for comparison (optional)"
-      default: "amd64"
+      description: "Architecture for comparison (required for release/mirror comparisons, ignored for arch comparisons)"
 
 search-pattern:
   description: "Search for a pattern in files"

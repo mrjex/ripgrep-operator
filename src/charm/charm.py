@@ -239,22 +239,42 @@ class RipgrepOperatorCharm(CharmBase):
 
     def _on_compare_debian(self, event: ActionEvent):
         """Handle the compare-debian action."""
-        cmd = ["debian-pkg-analyzer", "compare"]
-        
-        # Add comparison type and values
-        cmd.extend([
-            event.params["comparison_type"],
-            event.params["value1"],
-            event.params["value2"]
-        ])
-        
-        # Add architecture if specified
-        if "architecture" in event.params:
-            cmd.extend(["--architecture", event.params["architecture"]])
+        try:
+            self.unit.status = MaintenanceStatus("Comparing Debian packages")
             
-        # Run command and set results
-        result = self._run_cli_command(cmd)
-        event.set_results(result)
+            # Build command from parameters
+            cmd = ["debian-pkg-analyzer", "compare"]
+            
+            # Add comparison type
+            comparison_type = event.params["type"]
+            cmd.append(comparison_type)
+            
+            # Add the values to compare
+            cmd.extend([event.params["value1"], event.params["value2"]])
+            
+            # Add architecture flag only for release and mirror comparisons
+            if comparison_type in ["release", "mirror"]:
+                if "architecture" not in event.params:
+                    raise ValueError("Architecture is required for release and mirror comparisons")
+                cmd.extend(["--architecture", event.params["architecture"]])
+            
+            logger.debug(f"Running command: {' '.join(cmd)}")
+            
+            # Run command and set results
+            result = self._run_cli_command(cmd)
+            
+            if "error" in result:
+                logger.error(f"Command failed: {result['error']}")
+                event.fail(f"Comparison failed: {result['error']}")
+                self.unit.status = BlockedStatus(f"Comparison failed")
+            else:
+                event.set_results(result)
+                self.unit.status = ActiveStatus()
+                
+        except Exception as e:
+            logger.error(f"Comparison failed: {str(e)}")
+            event.fail(f"Comparison failed: {str(e)}")
+            self.unit.status = BlockedStatus(f"Comparison failed: {str(e)}")
 
 if __name__ == "__main__":
     main(RipgrepOperatorCharm) 

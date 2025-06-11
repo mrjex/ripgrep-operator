@@ -310,6 +310,8 @@ class RipgrepOperatorCharm(CharmBase):
                             raise ValueError("Architecture is required for release and mirror comparisons")
                         cmd.extend(["--architecture", event.params["comparison-architecture"]])
                 
+                logger.debug(f"Running command: {' '.join(cmd)}")
+                
                 # Execute analysis/comparison and save to temp file
                 analysis_result = self._run_cli_command(cmd)
                 if "error" in analysis_result:
@@ -328,19 +330,20 @@ class RipgrepOperatorCharm(CharmBase):
                     temp_file.name
                 ])
                 
+                logger.debug(f"Running search command: {' '.join(search_cmd)}")
                 search_result = self._run_cli_command(search_cmd)
                 
-                # Prepare final results
+                # Prepare final results with hyphenated keys
                 result = {
-                    "analysis_output": analysis_result["output"],
-                    "search_results": search_result.get("output", "No matches found"),
-                    "search_pattern": event.params["search-pattern"]
+                    "analysis-output": analysis_result["output"],
+                    "search-results": search_result.get("output", "No matches found"),
+                    "search-pattern": event.params["search-pattern"]
                 }
                 
                 if event.params.get("format") == "json":
                     result = json.dumps(result)
                 
-                event.set_results({"result": result})
+                event.set_results(result)  # Don't wrap in another dictionary
                 self.unit.status = ActiveStatus()
                 
         except Exception as e:

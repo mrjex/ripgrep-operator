@@ -23,23 +23,7 @@ getPrivateCLI() {
 
 
 
-# Get Snap package of the Linux distro CLI
+# Get Snap package of the Linux distro CLI (Future extension of the system)
 getLinuxDistroCLI() {
-    echo "TODO"
+    echo "Possible future extension of the system"
 }
-
-
-
-
-# Formats the package names to conform to the Ripgrep Operator's naming conventions
-formatPackage() {
-    echo "TODO"
-}
-
-
-
-# Deploy charm with specific snap version
-# juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer_0.2.snap
-# juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap
-
-# getPrivateCLI

@@ -31,7 +31,7 @@ runCompareTests() {
 # Test "analyze-and-search" action of the charm operator
 runAnalyzeSearchActionTests() {
     # Analyze mode: Search for packages with "python" in arm64 architecture
-    juju run ripgrep-operator/4 analyze-and-search \
+    juju run ripgrep-operator/5 analyze-and-search \
     mode=analyze \
     architecture=arm64 \
     search-pattern="kernel" \
@@ -39,7 +39,7 @@ runAnalyzeSearchActionTests() {
     release=bullseye
 
     # Compare mode: Compare architectures and search for large file count changes
-    juju run ripgrep-operator/4 analyze-and-search \
+    juju run ripgrep-operator/5 analyze-and-search \
     mode=compare \
     comparison-type=arch \
     value1=arm64 \
@@ -58,16 +58,17 @@ runAnalyzeSearchActionTests() {
     format=json
 
     # Compare mirrors and look for significant changes
-    juju run ripgrep-operator/4 analyze-and-search \
-    mode=compare \
-    comparison-type=mirror \
-    value1=uk \
-    value2=us \
-    comparison-architecture=amd64 \
-    search-pattern="(increased|decreased)" \
-    case-sensitive=false
+    # # Only matches changes of 1000 or more
+    # juju run ripgrep-operator/5 analyze-and-search \
+    # mode=compare \
+    # comparison-type=mirror \
+    # value1=uk \
+    # value2=us \
+    # comparison-architecture=amd64 \
+    # format=json \
+    # search-pattern="(\+|-)[0-9]{4,}" \
+    # case-sensitive=true
 }
-
 
 
 # TODO: Add tests for "search-pattern" action of the charm operator

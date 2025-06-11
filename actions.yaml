@@ -52,3 +52,53 @@ search-pattern:
       type: string
       description: "Output format (text or json)"
       default: "text"
+
+analyze-and-search:
+  description: "Analyze or compare Debian packages and search through the results"
+  params:
+    mode:
+      type: string
+      description: "Operation mode (analyze or compare)"
+      enum: ["analyze", "compare"]
+    # Analysis mode parameters
+    architecture:
+      type: string
+      description: "Architecture to analyze (required for analyze mode)"
+    count:
+      type: integer
+      description: "Number of packages to analyze"
+      default: 20
+    country:
+      type: string
+      description: "Mirror country code"
+      default: "us"
+    release:
+      type: string
+      description: "Debian release name"
+      default: "bullseye"
+    # Compare mode parameters
+    comparison-type:
+      type: string
+      description: "Type of comparison for compare mode (arch, release, mirror)"
+      enum: ["arch", "release", "mirror"]
+    value1:
+      type: string
+      description: "First value to compare"
+    value2:
+      type: string
+      description: "Second value to compare"
+    comparison-architecture:
+      type: string
+      description: "Architecture for comparison (required for release/mirror comparisons)"
+    # Search parameters
+    search-pattern:
+      type: string
+      description: "Pattern to search for in the analysis/comparison results"
+    case-sensitive:
+      type: boolean
+      description: "Whether the search should be case sensitive"
+      default: false
+    format:
+      type: string
+      description: "Output format (text or json)"
+      default: "text"

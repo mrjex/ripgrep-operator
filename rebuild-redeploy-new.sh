@@ -1,15 +1,11 @@
-
+#!/bin/bash
 
 # Directory: ~/ripgrep-operator
 
-
-
-
-
+# Import functions from get-snap-packages.sh
+source ./get-snap-packages.sh
 
 # Clean up previous deployment
-
-
 cleanPreviousDeployment() {
     PREV_REVISION=${1}
 
@@ -17,9 +13,7 @@ cleanPreviousDeployment() {
     juju remove-machine ${PREV_REVISION} --force
 }
 
-
 # Deploy new version
-
 deployCharm() {
     # sudo charmcraft clean
     sudo charmcraft pack
@@ -29,12 +23,9 @@ deployCharm() {
 }
 
 # Monitor status
-
 monitorCharmStatus() {
     juju status --watch 1s
 }
-
-
 
 ##  MAIN  ##
 
@@ -42,12 +33,16 @@ monitorCharmStatus() {
 
 cleanPreviousDeployment ${1}
 
-echo "Deploy new version"
+echo "Getting latest CLI snap package..."
+getPrivateCLI
 
+echo "Snap package:"
+ls ~/ripgrep-operator | grep .snap
+
+echo "Deploy new version"
 deployCharm
 
 echo "Monitor status"
-
 monitorCharmStatus
 
 

@@ -42,4 +42,4 @@ formatPackage() {
 # juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer_0.2.snap
 # juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap
 
-getPrivateCLI
+# getPrivateCLI

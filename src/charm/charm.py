@@ -9,6 +9,8 @@ from typing import Dict, Optional
 import subprocess
 import os
 from pathlib import Path
+import tempfile
+import json
 
 import ops
 from ops.charm import CharmBase, ConfigChangedEvent, ActionEvent
@@ -33,6 +35,7 @@ class RipgrepOperatorCharm(CharmBase):
         self.framework.observe(self.on.install, self._on_install)
         self.framework.observe(self.on.analyze_debian_action, self._on_analyze_debian)
         self.framework.observe(self.on.compare_debian_action, self._on_compare_debian)
+        self.framework.observe(self.on.analyze_and_search_action, self._on_analyze_and_search)
 
         # Storage observers
         self.framework.observe(self.on.data_storage_attached, self._on_storage_attached)
@@ -275,6 +278,79 @@ class RipgrepOperatorCharm(CharmBase):
             logger.error(f"Comparison failed: {str(e)}")
             event.fail(f"Comparison failed: {str(e)}")
             self.unit.status = BlockedStatus(f"Comparison failed: {str(e)}")
+
+    def _on_analyze_and_search(self, event: ActionEvent):
+        """Handle the analyze-and-search action."""
+        try:
+            self.unit.status = MaintenanceStatus("Analyzing and searching Debian packages")
+            
+            # Create a temporary file for storing analysis results
+            with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
+                # Step 1: Run analysis/comparison based on mode
+                if event.params["mode"] == "analyze":
+                    # Build analyze command
+                    cmd = ["debian-pkg-analyzer"]
+                    cmd.append(event.params["architecture"])
+                    
+                    if "count" in event.params:
+                        cmd.extend(["-n", str(event.params["count"])])
+                    if "country" in event.params:
+                        cmd.extend(["-c", event.params["country"]])
+                    if "release" in event.params:
+                        cmd.extend(["-r", event.params["release"]])
+                        
+                else:  # compare mode
+                    # Build compare command
+                    cmd = ["debian-pkg-analyzer", "compare"]
+                    cmd.append(event.params["comparison-type"])
+                    cmd.extend([event.params["value1"], event.params["value2"]])
+                    
+                    if event.params["comparison-type"] in ["release", "mirror"]:
+                        if "comparison-architecture" not in event.params:
+                            raise ValueError("Architecture is required for release and mirror comparisons")
+                        cmd.extend(["--architecture", event.params["comparison-architecture"]])
+                
+                # Execute analysis/comparison and save to temp file
+                analysis_result = self._run_cli_command(cmd)
+                if "error" in analysis_result:
+                    raise RuntimeError(f"Analysis failed: {analysis_result['error']}")
+                
+                temp_file.write(analysis_result["output"])
+                temp_file.flush()
+                
+                # Step 2: Search through the results
+                search_cmd = ["rg"]
+                if not event.params.get("case-sensitive", False):
+                    search_cmd.append("-i")
+                    
+                search_cmd.extend([
+                    event.params["search-pattern"],
+                    temp_file.name
+                ])
+                
+                search_result = self._run_cli_command(search_cmd)
+                
+                # Prepare final results
+                result = {
+                    "analysis_output": analysis_result["output"],
+                    "search_results": search_result.get("output", "No matches found"),
+                    "search_pattern": event.params["search-pattern"]
+                }
+                
+                if event.params.get("format") == "json":
+                    result = json.dumps(result)
+                
+                event.set_results({"result": result})
+                self.unit.status = ActiveStatus()
+                
+        except Exception as e:
+            logger.error(f"Analyze and search failed: {str(e)}")
+            event.fail(f"Analyze and search failed: {str(e)}")
+            self.unit.status = BlockedStatus(f"Analyze and search failed: {str(e)}")
+        finally:
+            # Cleanup temporary file
+            if 'temp_file' in locals():
+                os.unlink(temp_file.name)
 
 if __name__ == "__main__":
     main(RipgrepOperatorCharm) 

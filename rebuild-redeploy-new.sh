@@ -21,7 +21,7 @@ cleanPreviousDeployment() {
 # Deploy new version
 
 deployCharm() {
-    charmcraft pack
+    sudo charmcraft pack
     # juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm
     # juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap
     juju deploy ./ripgrep-operator_ubuntu-22.04-amd64-arm64.charm --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap

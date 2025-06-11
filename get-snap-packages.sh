@@ -15,7 +15,7 @@ getPrivateCLI() {
     sudo mv ~/ripgrep-operator/debian-pkg-analyzer*.snap ~/ripgrep-operator/debian-pkg-analyzer.snap
 
     cd ~/ripgrep-operator
-    
+
     # Fix permissions to make it readable
     sudo chown ubuntu:ubuntu debian-pkg-analyzer.snap
     chmod 644 debian-pkg-analyzer.snap
@@ -41,3 +41,5 @@ formatPackage() {
 # Deploy charm with specific snap version
 # juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer_0.2.snap
 # juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap
+
+getPrivateCLI

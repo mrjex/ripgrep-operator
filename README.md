@@ -76,6 +76,9 @@ tox               # Run all tests and checks
 ```
 
 
+![tox-unit-tests](assets/tox-unit-tests.PNG)
+
+
 ---
 
 Developed by Joel Mattsson

@@ -1,0 +1,7 @@
+tox>=4.0.0
+pytest>=6.0.0
+coverage[toml]>=7.0.0
+pytest-operator>=0.28.0
+ruff>=0.1.0
+codespell>=2.0.0
+pyright>=1.1.300 

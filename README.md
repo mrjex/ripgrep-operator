@@ -58,6 +58,25 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 - [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
 
 
+## Unit & Integration Tests
+
+While `requirements.txt` contains only runtime dependencies needed for the charm to function, `requirements-dev.txt` contains tools needed for development, testing and code quality. To be able to run the *unit* and *integration* tests located in `/tests` directory, you need to install from the latter .txt file to setup the *tox* command line utility.
+
+
+1. Install development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+2. Run tests:
+```bash
+tox -e unit        # Run unit tests
+tox -e integration # Run integration tests
+tox               # Run all tests and checks
+```
+
+
 ---
 
 Developed by Joel Mattsson

@@ -41,6 +41,8 @@ installManualPromptPackages() {
 
     sudo apt install python3-pip python3-venv python3-dev build-essential
     sudo apt install -y jq
+
+    sudo apt install tox -y
 }
 
 

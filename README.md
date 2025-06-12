@@ -26,14 +26,15 @@ Depending on your setup, you might need to manage a separate directory (a clone 
 
 3. Run `./scripts/dev-lifecycle/deploy-charm.sh X` where *X* is the number of the previous Juju model revision to be cleaned before launching the new revision. If no previous revisions exist (i.e if it's your first time running the operator) you don't need to pass any arguments
 
-
 4. Now, as you've successfully deployed this operator, the next step is to test. For this, you can refer to two Bash scripts as examples of how these commands would look and interact with the operator. Note that all of these tests are categorized and based on the defined actions in *actions.yaml*:
 
-- `scripts/tests/search-pattern-tests.sh`: Uses the *search-pattern* action, being the prominent feature of the public [Ripgrep](https://snapcraft.io/ripgrep) in Snapstore, essentially using recusrive searching for instances and patterns
+- `scripts/tests/search-pattern-tests.sh`: Uses the *search-pattern* action, being the prominent feature of the public [Ripgrep](https://snapcraft.io/ripgrep) in Snapstore, essentially using recusrive searching for instances and patterns.
 
 
-- `scripts/tests/charm-snap-tests.sh`: 
+- `scripts/tests/debian-tests.sh`: Uses the *analyze-debian* and *compare-debian* that are actions specific to a private CLI tool accessed as a Snap package. In essence, this very ripgrep operator executes the package to get output data.
 
+
+- `scripts/tests/debian-search-tests.sh` Uses the *search-and-analyze* action to recusrively search, filter and aggregate data from the output of a private CLI tool.
 
 
 ## Further Development

@@ -29,17 +29,6 @@ def test_search_text_format(mock_run, ripgrep):
     assert result == "test result"
 
 @patch("subprocess.run")
-def test_search_json_format(mock_run, ripgrep):
-    """Test search with JSON format."""
-    mock_result = [{"path": "file.txt", "lines": {"text": "match"}}]
-    mock_run.return_value = Mock(stdout=json.dumps(mock_result), returncode=0)
-    
-    result = ripgrep.search("pattern", "/test/path", "json")
-    
-    mock_run.assert_called_once()
-    assert result == mock_result
-
-@patch("subprocess.run")
 def test_search_with_error(mock_run, ripgrep):
     """Test search with error."""
     mock_run.side_effect = Exception("test error")

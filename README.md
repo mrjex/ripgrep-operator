@@ -1,7 +1,7 @@
 # Ripgrep Operator
 
-[![Charmhub](https://img.shields.io/badge/Charmhub-ripgrep--operator-blue)](https://charmhub.io)
-[![Snapcraft](https://img.shields.io/badge/Snapcraft-Store-green)](https://snapcraft.io)
+[![Charm](https://img.shields.io/badge/Charm-ripgrep--operator-blue)](https://charmhub.io)
+[![Snapcraft](https://img.shields.io/badge/Snapcraft-Package-green)](https://snapcraft.io)
 [![Juju](https://img.shields.io/badge/Juju-2.9+-purple)](https://juju.is/)
 [![LXD](https://img.shields.io/badge/LXD-5.0+-orange)](https://linuxcontainers.org/lxd)
 [![Multipass](https://img.shields.io/badge/Multipass-1.12+-lightblue)](https://multipass.run)
@@ -9,19 +9,11 @@
 > A Juju charm that provides ripgrep functionality as a service, enabling remote text search capabilities across different architectures and deployment scenarios.
 
 
-
 ## Architecture
 
 - **Picture here**
 
-
-- *Brief explanation here...*
-
-- This charm operator integrates into a larger system..
-- Multiple components..
-- Host OS, Multipass VM, Juju Controller orchestrator, LXD Containers, Charm operators, Snap packages, ...
-
-
+*This charm operator integrates into a larger system, being managed on an Ubuntu environment with a central Juju orchestrator controller managing LXD containers for this very **Ripgrep Operator** that use CLIs distrubtable for multiple Linux distros packaged by Snapcraft*
 
 
 ## Quick Start
@@ -30,29 +22,17 @@
 
 2. Run `./scripts/setup/setup-environment.sh`
 
+Depending on your setup, you might need to manage a separate directory (a clone of the mounted one) in the virtual machine to bypass strict Linux permissions. If that's the case, simply run `./scripts/dev-lifecycle/sync-dir.sh`
 
-Depending on your setup, you might need to manage a separate directory (a clone of the mounted one) in the virtual machine. This is to bypass strict Linux permissions.
-
-
-2.1 Run `./scripts/dev-lifecycle/sync-dir.sh`
+3. Run `./scripts/dev-lifecycle/deploy-charm.sh X` where *X* is the number of the previous Juju model revision to be cleaned before launching the new revision. If no previous revisions exist (i.e if it's your first time running the operator) you don't need to pass any arguments
 
 
-3. Run `./scripts/dev-lifecycle`
+4. Now, as you've successfully deployed this operator, the next step is to test. For this, you can refer to two Bash scripts as examples of how these commands would look and interact with the operator. Note that all of these tests are categorized and based on the defined actions in *actions.yaml*:
+
+- `scripts/tests/search-pattern-tests.sh`: Uses the *search-pattern* action, being the prominent feature of the public [Ripgrep](https://snapcraft.io/ripgrep) in Snapstore, essentially using recusrive searching for instances and patterns
 
 
-
-
-## Deployment
-
-
-- Juju, LXD, Charm
-
-
-- Suite of tests categorized by the Charm's defined actions in *actions.yaml*
-
-- `scripts/tests/charm-snap-tests.sh`
-
-- - `scripts/tests/search-pattern-tests.sh`
+- `scripts/tests/charm-snap-tests.sh`: 
 
 
 
@@ -100,8 +80,6 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 **Other Sources:**
 
 - [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
-
-
 
 
 

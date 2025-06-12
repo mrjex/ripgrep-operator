@@ -22,7 +22,7 @@
 
 2. Run `./scripts/setup/setup-environment.sh`
 
-Depending on your setup, you might need to manage a separate directory (a clone of the mounted one) in the virtual machine to bypass strict Linux permissions. If that's the case, simply run `./scripts/dev-lifecycle/sync-dir.sh`
+Depending on your setup, you might need to manage a separate directory (a clone of the mounted one) in the virtual machine to bypass strict Linux permissions. If that's the case, you can use `./scripts/dev-lifecycle/sync-dir.sh` and `scripts/dev-lifecycle/get-snap-packages.sh` to sync directories and manage standalone Snap package CLIs.
 
 3. Run `./scripts/dev-lifecycle/deploy-charm.sh X` where *X* is the number of the previous Juju model revision to be cleaned before launching the new revision. If no previous revisions exist (i.e if it's your first time running the operator) you don't need to pass any arguments
 
@@ -30,44 +30,19 @@ Depending on your setup, you might need to manage a separate directory (a clone 
 
 - `scripts/tests/search-pattern-tests.sh`: Uses the *search-pattern* action, being the prominent feature of the public [Ripgrep](https://snapcraft.io/ripgrep) in Snapstore, essentially using recusrive searching for instances and patterns.
 
-
 - `scripts/tests/debian-tests.sh`: Uses the *analyze-debian* and *compare-debian* that are actions specific to a private CLI tool accessed as a Snap package. In essence, this very ripgrep operator executes the package to get output data.
-
 
 - `scripts/tests/debian-search-tests.sh` Uses the *search-and-analyze* action to recusrively search, filter and aggregate data from the output of a private CLI tool.
 
-
-## Further Development
-
-
-- You will find the script `scripts/dev-lifecycle/juju-ssh-debug.sh` very useful
-
-- `scripts/dev-lifecycle/get-snap-packages.sh` --> Gets the snap packages of correspondig system components being standalone CLIs
-
-
+5. For further development and debugging, you can turn to `scripts/dev-lifecycle/juju-ssh-debug.sh` in cases where the `/src` code causes errors to obtain more detailed error logs.
 
 
 ## Business Value
 
-The ripgrep operator wraps the high-performance ripgrep search tool in a Juju charm, making it remotely deployable, observable, and integratable with other cloud-native applications through standardized interfaces. By providing a cloud-native interface to ripgrep's powerful search capabilities, it enables automated, scalable text analysis across distributed systems, which is particularly valuable when combined with other tools (like your Debian package analyzer) for comprehensive system analysis. The operator pattern allows for consistent deployment, monitoring, and integration across different architectures and cloud environments, making it easier to incorporate powerful text search capabilities into larger automated workflows.
-
-
-
-
-## Features
-
-- Cloud-native wrapper for ripgrep search functionality
-- Remote deployment and management through Juju
-- Multi-architecture support through LXD
-- Standardized interfaces for search pipeline integration
-- Observable and scalable text search capabilities
-
+The ripgrep operator wraps the high-performance ripgrep search tool in a Juju charm, making it remotely deployable, observable, and integratable with other cloud-native applications through standardized interfaces. By providing a cloud-native interface to ripgrep's powerful search capabilities, it enables automated, scalable text analysis across distributed systems, which is particularly valuable when combined with other tools for system analysis.
 
 
 ## Inspirational Sources
-
-
-### Open Source Operators
 
 **Primary Sources:**
 
@@ -81,7 +56,6 @@ The ripgrep operator wraps the high-performance ripgrep search tool in a Juju ch
 **Other Sources:**
 
 - [Charm Unit Tests](https://ops.readthedocs.io/en/latest/howto/write-unit-tests-for-a-charm.html)
-
 
 
 ---

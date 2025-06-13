@@ -11,7 +11,7 @@
 
 ## Architecture
 
-- **Picture here**
+![architecture-diagram](assets/architecture-diagram.PNG)
 
 *This charm operator integrates into a larger system, being managed on an Ubuntu environment with a central Juju orchestrator controller managing LXD containers for this very **Ripgrep Operator** that use CLIs distrubtable for multiple Linux distros packaged by Snapcraft*
 

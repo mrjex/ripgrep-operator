@@ -9,6 +9,17 @@
 > A Juju charm that provides ripgrep functionality as a service, enabling remote text search capabilities across different architectures and deployment scenarios.
 
 
+## Table of Contents
+- [Ripgrep Operator](#ripgrep-operator)
+  - [Table of Contents](#table-of-contents)
+  - [Architecture](#architecture)
+  - [Production-Grade System](#production-grade-system)
+  - [Quick Start](#quick-start)
+  - [Business Value](#business-value)
+  - [Inspirational Sources](#inspirational-sources)
+  - [Unit Tests](#unit-tests)
+
+
 ## Architecture
 
 ![architecture-diagram](assets/architecture-diagram.PNG)
@@ -17,7 +28,7 @@
 
 
 
-## Productin-Grade System
+## Production-Grade System
 
 ![production-grade-system-diagram](assets/production-grade-system-diagram.png)
 

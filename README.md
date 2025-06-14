@@ -16,6 +16,17 @@
 *This charm operator integrates into a larger system, being managed on an Ubuntu environment with a central Juju orchestrator controller managing LXD containers for this very **Ripgrep Operator** that use CLIs distrubtable for multiple Linux distros packaged by Snapcraft*
 
 
+
+## Productin-Grade System
+
+![production-grade-system-diagram](assets/production-grade-system-diagram.png)
+
+*Text here*
+
+*More info about individual components at [Documentation](./PRODUCTION_SYSTEM.md)*
+
+
+
 ## Quick Start
 
 1. Setup Ubuntu environment

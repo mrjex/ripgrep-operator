@@ -1,6 +1,6 @@
-# Production-Grade System
+# Production Architecture
 
-Real-world use cases:
+This section outlines how this system could evolve into a production-grade solution, addressing real-world use cases for both distribution maintainers and enterprise users.
 
 - **Distribution Maintainers:**
   - Understanding which packages are most used
@@ -13,9 +13,9 @@ Real-world use cases:
   - Understanding common configuration patterns
 
 
+- **Picture of production-architecture here**
 
-![production-grade-diagram](../assets/production-grade-system-diagram.png)
-
+This system architecture has been carefully designed to handle real-world deployment scenarios. The diagram shows implemented components in green, including the CLI Assignment Snap package at the bottom layer. While the current implementation (detailed in `docs/architecture.md`) uses Multipass for development, this production design replaces it with MAAS nodes and incorporates Launchpad for build management, Landscape for system management, and supports multi-cloud deployment through infrastructure as code with Terraform. The Orchestration and Application layers maintain similar structural patterns to the current implementation, with the key difference being the use of Charmed Kubernetes and Pods instead of LXD containers.
 
 
 ## Physical Infrastructure Layer
@@ -56,7 +56,7 @@ Real-world use cases:
 
 ### Snapcraft Packages
 
-- **Private Assignment Task:** This very CLI assignment, where Debian mirrors and their Content indices with different architectures are analyzed
+- **Private Assignment Task:** The private CLI assignment
 
 - **Distro Meta Compare:** Uses documentation scraping, release metadata and repository analysis to provide insights for different Linux Distros
 

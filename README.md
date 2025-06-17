@@ -51,9 +51,9 @@ Depending on your setup, you might need to manage a separate directory (a clone 
 
 - `scripts/tests/search-pattern-tests.sh`: Uses the *search-pattern* action, being the prominent feature of the public [Ripgrep](https://snapcraft.io/ripgrep) in Snapstore, essentially using recusrive searching for instances and patterns.
 
-- `scripts/tests/debian-tests.sh`: Uses the *analyze-debian* and *compare-debian* that are actions specific to a private CLI tool accessed as a Snap package. In essence, this very ripgrep operator executes the package to get output data.
+- `scripts/tests/debian-tests.sh`: Uses the specific actions of the private CLI tool, accessed as a Snap Package. In essence, this very ripgrep operator executes the package to get output data.
 
-- `scripts/tests/debian-search-tests.sh` Uses the *search-and-analyze* action to recusrively search, filter and aggregate data from the output of a private CLI tool.
+- `scripts/tests/debian-search-tests.sh` Uses the *search-and-analyze* action to recusrively search, filter and aggregate data from the output of a private CLI tool, essentially combining the two aforementioned actions into one.
 
 5. For further development and debugging, you can turn to `scripts/dev-lifecycle/juju-ssh-debug.sh` in cases where the `/src` code causes errors to obtain more detailed error logs.
 

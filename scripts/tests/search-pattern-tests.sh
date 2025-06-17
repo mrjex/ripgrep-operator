@@ -1,4 +1,8 @@
-#!/bin/bash
+###   SEARCH PATTERN TESTS   ###
+#
+#    - Test the search-pattern action of the charm operator
+
+
 set -e  # Exit on error
 
 # Colors for output

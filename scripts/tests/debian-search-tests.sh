@@ -26,16 +26,4 @@ runAnalyzeSearchActionTests() {
     comparison-architecture=amd64 \
     search-pattern="(lib|dev)" \
     format=json
-
-    # Compare mirrors and look for significant changes
-    # # Only matches changes of 1000 or more
-    # juju run ripgrep-operator/5 analyze-and-search \
-    # mode=compare \
-    # comparison-type=mirror \
-    # value1=uk \
-    # value2=us \
-    # comparison-architecture=amd64 \
-    # format=json \
-    # search-pattern="(\+|-)[0-9]{4,}" \
-    # case-sensitive=true
 }

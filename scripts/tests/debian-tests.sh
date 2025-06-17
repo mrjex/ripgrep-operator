@@ -1,8 +1,4 @@
-
-
 # Prerequisite: Deploy with Snap package as Charm resource
-# juju deploy ./ripgrep-operator --resource debian-pkg-analyzer=./debian-pkg-analyzer.snap
-
 
 # Test "analyze-debian" action of the charm operator
 runAnalysysTests() {
